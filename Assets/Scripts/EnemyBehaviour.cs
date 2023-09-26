@@ -7,11 +7,13 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] float dist;
     [SerializeField] private float worldEndBoundY;
-    private float health;
+    private float maxHealth = 100f;
+    private float currentHealth;
+    private Animator anim;
 
     public EnemyBehaviour(float health)
     {
-        this.health = health;
+        
     }
 
     private bool isFacingRight = true;
@@ -19,8 +21,9 @@ public class EnemyBehaviour : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        this.currentHealth = this.maxHealth;
+        anim = GetComponent<Animator>();
         player = GameObject.Find("Player");
-        Debug.Log(player);
         spawnScript = GameObject.Find("EnemySpawnManager").GetComponent<SpawnEnemies>();
         dist = gameObject.transform.position.x - player.transform.position.x;
         if(dist > 0 && isFacingRight)
@@ -47,6 +50,16 @@ public class EnemyBehaviour : MonoBehaviour
         {
             spawnScript.DestroyEnemy(gameObject);
         }
+    }
+
+    public void Die()
+    {
+        Debug.Log("Enemy died!");
+        // Play die animation
+        anim.SetBool("isDead", true);
+
+        //GetComponent<Collider2D>().isTrigger = true;
+        this.enabled = false;
     }
 
     void Flip()

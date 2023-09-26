@@ -2,13 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Skeleton : EnemyBehaviour
+public class Skeleton : MonoBehaviour
 {
     private float speed;
 
-    public Skeleton(float health, float speed) : base(health)
+    private void Start()
     {
-        this.speed = speed;
-     
+        
+    }
+
+    private void Update()
+    {
+        
     }
 }

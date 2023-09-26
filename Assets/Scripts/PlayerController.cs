@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     bool isFiring = false;
     float fireRate = 0.5f;
     float nextFire = 0.0f;
+    float attackDamage = 40f;
     public bool isGrounded = true;
     private float timeToStart = 2f;
     public LayerMask enemyLayers;
@@ -90,6 +91,7 @@ public class PlayerController : MonoBehaviour
         foreach(Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
+            enemy.GetComponent<EnemyBehaviour>().Die();
         }
     }
 
