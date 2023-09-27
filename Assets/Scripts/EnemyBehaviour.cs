@@ -7,21 +7,12 @@ public class EnemyBehaviour : MonoBehaviour
     [SerializeField] private GameObject player;
     [SerializeField] float dist;
     [SerializeField] private float worldEndBoundY;
-    private float maxHealth = 100f;
-    private float currentHealth;
     private Animator anim;
-
-    public EnemyBehaviour(float health)
-    {
-        
-    }
-
     private bool isFacingRight = true;
     private SpawnEnemies spawnScript;
     // Start is called before the first frame update
     void Start()
     {
-        this.currentHealth = this.maxHealth;
         anim = GetComponent<Animator>();
         player = GameObject.Find("Player");
         spawnScript = GameObject.Find("EnemySpawnManager").GetComponent<SpawnEnemies>();

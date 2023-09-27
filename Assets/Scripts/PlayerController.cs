@@ -91,7 +91,7 @@ public class PlayerController : MonoBehaviour
         foreach(Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
-            enemy.GetComponent<EnemyBehaviour>().Die();
+            enemy.GetComponent<Enemy>().Die();
         }
     }
 
