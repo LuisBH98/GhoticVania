@@ -12,6 +12,8 @@ public class SpawnEnemies : MonoBehaviour
     public float orientation;
     private float dist;
     private List<GameObject> enemiesOnScreen = new List<GameObject>();
+    float timePassed = 0f;
+    float timeToSpawn = 4f;
 
     // Visible properties
     [SerializeField] private GameObject[] enemies;
@@ -22,25 +24,46 @@ public class SpawnEnemies : MonoBehaviour
     void Start()
     {
         player = GameObject.Find("Player");
-        InvokeRepeating("SpawnEnemy", 2f, 4f);
+        // InvokeRepeating("SpawnEnemy", 2f, 4f);
     }
 
     // Update is called once per frame
     void Update()
     {
         transform.position = player.transform.position;
+        // Invoke("SpawnEnemy", 4f);
+        timePassed += Time.deltaTime;
+        if(timePassed >= timeToSpawn)
+        {
+            SpawnEnemy();
+            timePassed = 0;
+            // TODO: Spawn enemies more quickly when player gets 100 points
+            // timeToSpawn *= 0.3f; // TODO: Determinate the factor to decrease the time to spawn an enemy
+
+            // TODO: Also check the number of enemies we can get on screen to keep the game performance
+            //if(enemiesOnScreen.Count < maxEnemiesOnScreen)
+            //{
+            //    SpawnEnemy();
+            //}
+        }
     }
 
     void SpawnEnemy()
     {
-        if (playerController.isGrounded && enemiesOnScreen.Count < maxEnemiesOnScreen)
-        {
-            orientation = Random.Range(0, 2) * 2 - 1;
-            spawnPositionX = transform.position.x - (xRangeMargin * orientation);
-            dist = Vector3.Distance(player.transform.position, skeletonSpawner.transform.position);
-            spawnPositionY = skeletonSpawner.transform.position.y + dist;
-            enemiesOnScreen.Add(Instantiate(enemies[0], new Vector3(spawnPositionX, player.transform.position.y, 0), enemies[0].transform.rotation));
-        }
+        //if (playerController.isGrounded && enemiesOnScreen.Count < maxEnemiesOnScreen)
+        //{
+        //    orientation = Random.Range(0, 2) * 2 - 1;
+        //    spawnPositionX = transform.position.x - (xRangeMargin * orientation);
+        //    dist = Vector3.Distance(player.transform.position, skeletonSpawner.transform.position);
+        //    spawnPositionY = skeletonSpawner.transform.position.y + dist;
+        //    enemiesOnScreen.Add(Instantiate(enemies[0], new Vector3(spawnPositionX, player.transform.position.y, 0), enemies[0].transform.rotation));
+        //}
+        orientation = Random.Range(0, 2) * 2 - 1;
+        spawnPositionX = transform.position.x - (xRangeMargin * orientation);
+        dist = Vector3.Distance(player.transform.position, skeletonSpawner.transform.position);
+        spawnPositionY = skeletonSpawner.transform.position.y + dist;
+        Instantiate(enemies[0], new Vector3(spawnPositionX, player.transform.position.y, 0), enemies[0].transform.rotation);
+        // enemiesOnScreen.Add(Instantiate(enemies[0], new Vector3(spawnPositionX, player.transform.position.y, 0), enemies[0].transform.rotation));
     }
 
     public void DestroyEnemy(GameObject obj)

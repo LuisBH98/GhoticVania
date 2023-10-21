@@ -9,45 +9,43 @@ public class Enemy : MonoBehaviour
     float worldEndBoundY;
     Animator anim;
     bool isFacingRight = false;
+    [SerializeField] private float speed = 0.5f;
+    int enemyScore = 20;
+    int enemyDealDamage = 20;
 
     // Start is called before the first frame update
     void Start()
     {
         player = GameObject.Find("Player");
         anim = GetComponent<Animator>();
-        distToPlayer = gameObject.transform.position.x - player.transform.position.x;
-        if(distToPlayer > 0)
-        {
-            // Enemy appears on the right facing left
-            Flip();
-        }
-        else if(distToPlayer < 0 && !isFacingRight)
-        {
-            // Enemy appears on the left facing right
-            Flip();
-        }
+        GetComponent<Collider2D>().enabled = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        distToPlayer = gameObject.transform.position.x - player.transform.position.x;
-        if (distToPlayer > 0 && isFacingRight)
+        Vector3 scale = transform.localScale;
+        if(player.transform.position.x > gameObject.transform.position.x)
         {
-            this.Flip();
-        }
-        else if (distToPlayer < 0 && !isFacingRight)
+            scale.x = Mathf.Abs(scale.x) * -1 * (isFacingRight ? 1 : -1);
+            MoveEnemy(1);
+            isFacingRight = true;
+        } else
         {
-            this.Flip();
+            scale.x = Mathf.Abs(scale.x) * (isFacingRight ? -1 : 1);
+            MoveEnemy(-1);
+            isFacingRight = false;
         }
+
+        transform.localScale = scale;
     }
 
-    void Flip()
+    void MoveEnemy(int speed_direction)
     {
-        Vector3 currentScale = gameObject.transform.localScale;
-        currentScale.x *= -1;
-        gameObject.transform.localScale = currentScale;
-        isFacingRight = !isFacingRight;
+        if (anim.GetBool("startWalk"))
+        {
+            transform.Translate(speed * Time.deltaTime * speed_direction, 0, 0);
+        }
     }
 
     public void Die()
@@ -66,5 +64,19 @@ public class Enemy : MonoBehaviour
         spawnManager.DestroyEnemy(gameObject);
     }
 
+    void StartWalking()
+    {
+        anim.SetBool("startWalk", true);
+        GetComponent<Collider2D>().enabled = true;
+    }
 
+    public int getEnemyScore()
+    {
+        return this.enemyScore;
+    }
+
+    public int getEnemyDealDamage()
+    {
+        return this.enemyDealDamage;
+    }
 }
