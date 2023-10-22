@@ -152,6 +152,11 @@ public class PlayerController : MonoBehaviour
         return this.facingRight;
     }
 
+    public int getPlayerScore()
+    {
+        return this.playerScore;
+    }
+
     public IEnumerator Hurt()
     {
         anim.SetBool("isHurt", true);
