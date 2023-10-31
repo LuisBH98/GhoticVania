@@ -2,6 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+static class ENEMY_CONST
+{
+    public const float INCREASE_HEALTH_PERCENT = 0.2f;
+}
+
 public class Enemy : MonoBehaviour
 {
     GameObject player;
@@ -12,6 +18,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private float speed = 0.5f;
     int enemyScore = 20;
     int enemyDealDamage = 20;
+    float health = 20f;
 
     // Start is called before the first frame update
     void Start()
@@ -78,5 +85,10 @@ public class Enemy : MonoBehaviour
     public int getEnemyDealDamage()
     {
         return this.enemyDealDamage;
+    }
+
+    public void updateEnemyHealth(int playerScore)
+    {
+        this.health += ENEMY_CONST.INCREASE_HEALTH_PERCENT;
     }
 }

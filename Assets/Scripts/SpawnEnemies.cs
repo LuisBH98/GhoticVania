@@ -11,7 +11,7 @@ public class SpawnEnemies : MonoBehaviour
     public float spawnPositionY;
     public float orientation;
     private float dist;
-    private List<GameObject> enemiesOnScreen = new List<GameObject>();
+    [SerializeField] private List<GameObject> enemiesOnScreen = new List<GameObject>();
     float timePassed = 0f;
     float timeToSpawn = 4f;
     int scoreLimit = 100;
@@ -32,15 +32,7 @@ public class SpawnEnemies : MonoBehaviour
     void Update()
     {
         transform.position = player.transform.position;
-
-        // TODO: Set a time limit to spawn to avoid caos spawning and increment enemy's life to make the game harder
-        if(player.GetComponent<PlayerController>().getPlayerScore() > scoreLimit)
-        {
-            CancelInvoke();
-            timeToSpawn = timeToSpawn - timeToSpawn * 0.3f;
-            scoreLimit += 100;
-            InvokeRepeating("SpawnEnemy", 2f, timeToSpawn);
-        }
+        
     }
 
     void SpawnEnemy()
@@ -59,5 +51,12 @@ public class SpawnEnemies : MonoBehaviour
     {
         enemiesOnScreen.Remove(obj);
         Destroy(obj);
+    }
+
+    public void updateTimeToSpawn()
+    {
+        CancelInvoke();
+        if (timeToSpawn > 1f) timeToSpawn -= timeToSpawn * 0.3f;
+        InvokeRepeating("SpawnEnemy", 2f, timeToSpawn);
     }
 }

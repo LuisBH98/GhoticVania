@@ -12,13 +12,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float attackRange = 0.5f;
     [SerializeField] TMP_Text totalScore;
     [SerializeField] private string gameOverScene;
+    [SerializeField] private List<GameObject> lifes = new List<GameObject>();
     Rigidbody2D rb;
     Animator anim;
     bool facingRight = true;
     bool isFiring = false;
     float fireRate = 0.5f;
     float nextFire = 0.0f;
-    float attackDamage = 40f;
+    float attackDamage = 20f;
     bool invulnerable = false;
     public bool isGrounded = true;
     private float timeToStart = 2f;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     string scoreText;
     int maxHealth = 100;
     int currentHealth;
+    int currentScoreLimit = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -79,8 +81,6 @@ public class PlayerController : MonoBehaviour
         {
             timeToStart -= Time.deltaTime;
         }
-
-        
     }
 
     void Flip()
@@ -103,10 +103,10 @@ public class PlayerController : MonoBehaviour
         foreach(Collider2D enemy in hitEnemies)
         {
             Debug.Log("We hit " + enemy.name);
-            int enemyScore = enemy.GetComponentInChildren<Enemy>().getEnemyScore();
-            this.playerScore += enemyScore;
-            totalScore.SetText(scoreText + this.playerScore.ToString());
-            enemy.GetComponent<Enemy>().Die();
+            Enemy enemyController = enemy.GetComponentInChildren<Enemy>();
+            UpdateScore(enemyController);
+            IncreaseDifficulty(enemyController);
+            DestroyEnemyFromScene(enemyController);
         }
     }
 
@@ -130,21 +130,55 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Enemy") && !invulnerable )
         {
             Debug.Log("Player hits enemy");
-            if(currentHealth > 0)
+            
+            if(lifes.Count > 1)
             {
-                int enemyDamage = collision.gameObject.GetComponentInChildren<Enemy>().getEnemyDealDamage();
                 Vector2 direction = (gameObject.transform.position - collision.gameObject.transform.position).normalized;
                 rb.AddForce(direction * 15, ForceMode2D.Impulse);
-                currentHealth -= enemyDamage;
+                lifes[lifes.Count - 1].SetActive(false);
+                lifes.RemoveAt(lifes.Count - 1);
                 StartCoroutine(Hurt());
             } else
             {
+                lifes[lifes.Count - 1].SetActive(false);
+                lifes.RemoveAt(lifes.Count - 1);
                 // GAME OVER
                 StartCoroutine(Die());
-                // SceneManager.LoadScene(gameOverScene);
             }
-            
         }
+    }
+
+    /**
+     * Updates internal and interface score
+     */
+    private void UpdateScore(Enemy enemy)
+    {
+        int enemyScore = enemy.getEnemyScore();
+        this.playerScore += enemyScore;
+        totalScore.SetText(scoreText + this.playerScore.ToString());
+    }
+
+    /**
+     * Increase game difficulty.
+     * Make enemies spawn faster and increasing their health
+     */
+    private void IncreaseDifficulty(Enemy enemy)
+    {
+        if (this.playerScore > currentScoreLimit)
+        {
+            currentScoreLimit += 100;
+            enemy.updateEnemyHealth(this.playerScore);
+            GameObject.Find("EnemySpawnManager").GetComponent<SpawnEnemies>().updateTimeToSpawn();
+        }
+    }
+
+    /**
+     * Destroy enemy in the scene to free memory space
+     */
+
+    private void DestroyEnemyFromScene(Enemy enemy)
+    {
+        enemy.Die();
     }
 
     public bool getFacingRight()
